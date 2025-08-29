@@ -1,0 +1,3 @@
+my study of using the Python language
+...
+in progress
