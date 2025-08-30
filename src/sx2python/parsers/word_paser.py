@@ -1,29 +1,33 @@
-from src.sx2python.text import Text
-from src.sx2python.text_context_gen import Word
+from src.sx2python.common import SxError
+from src.sx2python.enums import SxErrorTypes
+from src.sx2python.parsers.parser import SxParser
+from src.sx2python.text import Text, Position
+from src.sx2python.words.word import Word
 
-"""###
-public Word read(TextContext tC)  {
-    tC.findNextCharacter();
-    Position inx= tC.getPosition();
-    int beginX =inx.getX();
 
-    String line = tC.getLine();
-    String word = lookAhead(line, beginX);
-    if ("".equals(word) )
-    throw SxException.create(SxExTyp.EMPTY_WORD, tC);
+class WordParser(SxParser[Word]):
 
-    int endX = beginX + word.length();
-    tC.setPosition(new Position(endX, inx.getY()));
-    return new Word(inx, word);
-}
-"""
+    _instance = None
 
-class WordParser:
+    @classmethod
+    def instance(cls) -> SxParser[Word]:
+        if cls._instance is None:
+            cls._instance = cls()
+
+        return cls._instance
+
 
     def read(self, text: "Text") -> Word:
         text.next_char()
-        inx = text.position
-        return None # TODO
+        position = text.position
+        begin_x = position.x
+        word = self._look_ahead(text.line, begin_x)
+
+        if "" == word:  raise SxError.create( SxErrorTypes.EMPTY_WORD, text)
+
+        end_x = begin_x + len(word)
+        text.position = Position(end_x, position.y)
+        return Word(position, word)
 
 
     @staticmethod
