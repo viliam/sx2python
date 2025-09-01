@@ -1,17 +1,11 @@
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from typing import Optional
 
-
-@dataclass(frozen=True)
-class Position:
-    x: int
-    y: int
-
-    def add_x(self, by: int) -> "Position":
-        return Position(self.x + by, self.y)
-
-    def __str__(self) -> str:
-        return f"({self.x},{self.y})"
+from src.sx2python.common import SxError
+from src.sx2python.enums import SxErrorTypes
+from src.sx2python.parsers.word_paser import WordParser
+from src.sx2python.position import Position
+from src.sx2python.words.word import Word
 
 
 class Text:
@@ -41,7 +35,7 @@ class Text:
         return self._lines[row] if 0 <= row < len(self._lines) else ""
 
 
-    def next_char(self) -> Optional[Position]:
+    def next_char_position(self) -> Optional[Position]:
         """Move cursor to a next not empty character"""
         position = self._position
         x = position.x
@@ -71,5 +65,88 @@ class Text:
         return True
 
 
+    def next_char(self) -> str:
+        """Move cursor to next character, read that character and return a cursor back"""
+        actual = Position.create( self._position)
+        self.next_char_position()
+        self.ensure_not_eof()
+
+        x, y = self._position.x, self._position.y
+        p = self._lines[y][x]    # take a look and
+        self._position = actual  # move position back
+        return p
+
+
     def is_end_of_file(self) -> bool:
-        return self.next_char() is None
+        return self.next_char_position() is None
+
+    def ensure_not_eof(self):
+        if self.is_end_of_file() :
+            raise SxError.create_no_msg(SxErrorTypes.END_OF_FILE, self.position)
+
+    def is_prefix_int(self) -> bool:
+        return self.next_char().isdigit()
+
+    def is_prefix_letter(self) -> bool:
+        return self.next_char().isalpha() or self.next_char() == '_'
+
+    def is_prefix_variable(self) -> bool:
+
+
+
+class IsPrefixTemplateMethod(ABC):
+
+    def __init__(self, text: Text):
+        self._text = text
+
+    @abstractmethod
+    def is_prefix_word(self, word: Word) -> bool:
+        pass
+
+    def is_prefix(self) -> bool:
+        text  = self._text
+        pos = text.position
+        try:
+            print("do work")
+            if not text.is_prefix_letter():
+                return False
+            word = WordParser.instance().read(text)
+            return self.is_prefix_word(word)
+        finally:
+            text.position = pos
+
+
+    # abstract class IsPrefixTemplateMetod {
+    #     public boolean isPrefix()  {
+    #         Position pos = getPosition();
+    #         try {
+    #             if (!isPrefixLetter() ) {
+    #                return false;
+    #             }
+    #
+    #             Word word = Readers.word().read(TextContext.this);
+    #             return  isPrefix(word);
+    #         } finally {
+    #             setPosition(pos);
+    #         }
+    #     }
+    #
+    #     protected abstract boolean isPrefix(Word word);
+    # }
+
+
+    # abstract class IsPrefixDeclarationTemplateMetod {
+    #     public boolean jePrefix()  {
+    #         Position position = getPosition();
+    #         try {
+    #             if (isEndOfFile() || !isPrefixLetter() )
+    #                 return false;
+    #             Word word = Readers.word().read(TextContext.this);
+    #             return RezervedWordsEnum.DATA_TYPE.is(word.getContent()) && isPrefixName();
+    #         } finally {
+    #             setPosition(position);
+    #         }
+    #     }
+    #
+    #     protected abstract boolean isPrefixName();
+    # }

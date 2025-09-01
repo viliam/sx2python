@@ -18,12 +18,12 @@ class WordParser(SxParser[Word]):
 
 
     def read(self, text: "Text") -> Word:
-        text.next_char()
+        text.next_char_position()
         position = text.position
         begin_x = position.x
         word = self._look_ahead(text.line, begin_x)
 
-        if "" == word:  raise SxError.create( SxErrorTypes.EMPTY_WORD, text)
+        if "" == word:  raise SxError.create( SxErrorTypes.EMPTY_WORD, text.position, text.line)
 
         end_x = begin_x + len(word)
         text.position = Position(end_x, position.y)

@@ -1,8 +1,7 @@
 from typing import Protocol
-
-from src.sx2python.text import Text
 from typing import TypeVar
 
+from src.sx2python.text import Text
 from src.sx2python.words.word import WordABC
 
 TWord = TypeVar('TWord', bound=WordABC)
