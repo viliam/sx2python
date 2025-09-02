@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 from src.sx2python.common import SxError
-from src.sx2python.enums import SxErrorTypes
+from src.sx2python.enums import SxErrorType
+from src.sx2python.position import Position
 from src.sx2python.text import Text
 
 
@@ -58,4 +59,43 @@ class TestText(TestCase):
         with self.assertRaises(SxError) as context:
             text.next_char()
 
-        self.assertEqual(SxErrorTypes.END_OF_FILE, context.exception._typ)
+        self.assertEqual(SxErrorType.END_OF_FILE, context.exception._typ)
+
+    # ----------------------------------------------  _look_ahead
+    def test_look_ahead_finds_word(self):
+        text = Text(["TestWord example"])
+        result = text.look_ahead()
+        self.assertEqual("TestWord", result)
+
+    def test_look_ahead_empty_string(self):
+        text = Text([""])
+        result = text.look_ahead()
+        self.assertEqual("", result)
+
+    def test_look_ahead_start_index_beyond_length(self):
+        text = Text(["ShortWord"])
+        text.position = Position(len("ShortWord"), 0)
+        result = text.look_ahead()
+        self.assertEqual("", result)
+
+    def test_look_ahead_non_word_character(self):
+        text = Text(["Test1@Word"])
+        text.position= Position(5,0)
+        result = text.look_ahead()
+        self.assertEqual("", result)
+
+    # ----------------------------------------------  _find_end_of_word
+    def test_find_end_of_word_correct_index(self):
+        line = "OpenAI Language Model"
+        result = Text._find_end_of_word(line, 7)
+        self.assertEqual(15, result)
+
+    def test_find_end_of_word_no_word_characters(self):
+        line = "!@#$%^&*"
+        result = Text._find_end_of_word(line, 0)
+        self.assertEqual(0, result)
+
+    def test_find_end_of_word_index_out_of_bounds(self):
+        line = "TextExample"
+        result = Text._find_end_of_word(line, len(line))
+        self.assertEqual(len(line), result)

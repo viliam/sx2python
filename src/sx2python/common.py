@@ -1,28 +1,28 @@
 from typing import Optional
 
-from src.sx2python.enums import SxErrorTypes
+from src.sx2python.enums import SxErrorType
 from src.sx2python.position import Position
 
 
 class SxError(Exception):
 
-    def __init__(self, typ: SxErrorTypes, message: str, position: Position):
+    def __init__(self, typ: SxErrorType, message: str, position: Position):
         super().__init__(message)
         self._typ = typ
         self._position = position
 
 
     @classmethod
-    def create_no_msg(cls, typ: SxErrorTypes, position: Position) -> "SxError":
+    def create_no_msg(cls, typ: SxErrorType, position: Position) -> "SxError":
         return cls(typ, str(typ), position)
 
     @classmethod
-    def create(cls, typ: SxErrorTypes, position: Position, line: str) -> "SxError":
+    def create(cls, typ: SxErrorType, position: Position, line: str) -> "SxError":
         return cls.create_with_message(typ, None, position, line)
 
 
     @classmethod
-    def create_with_message(cls, typ: SxErrorTypes, message: Optional[str], position: Position, line: str) -> "SxError":
+    def create_with_message(cls, typ: SxErrorType, message: Optional[str], position: Position, line: str) -> "SxError":
         if message is None:
             message = cls._make_message(typ, position, line)
 
@@ -30,12 +30,12 @@ class SxError(Exception):
 
 
     @classmethod
-    def create_with_position(cls, typ: SxErrorTypes, position: Position) -> "SxError":
+    def create_with_position(cls, typ: SxErrorType, position: Position) -> "SxError":
         return cls(typ, str(typ), position)
 
 
     @staticmethod
-    def _make_message(typ: SxErrorTypes, position: Position, line: str) -> str:
+    def _make_message(typ: SxErrorType, position: Position, line: str) -> str:
         col = position.x
         a_char = line[col] if len(line) > col else ' '
 

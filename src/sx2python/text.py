@@ -1,9 +1,7 @@
-from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Callable
 
 from src.sx2python.common import SxError
-from src.sx2python.enums import SxErrorTypes
-from src.sx2python.parsers.word_paser import WordParser
+from src.sx2python.enums import SxErrorType, ReservedWordEnum, SymbolEnum, ReservedWordGroupEnum
 from src.sx2python.position import Position
 from src.sx2python.words.word import Word
 
@@ -66,7 +64,7 @@ class Text:
 
 
     def next_char(self) -> str:
-        """Move cursor to next character, read that character and return a cursor back"""
+        """Move position to next character, read that character and return a position back"""
         actual = Position.create( self._position)
         self.next_char_position()
         self.ensure_not_eof()
@@ -76,13 +74,25 @@ class Text:
         self._position = actual  # move position back
         return p
 
+    def look_ahead(self) -> str:
+        line = self.line
+        x = self.position.x
+        end_x = Text._find_end_of_word(line, x)
+        return line[x:end_x] if x < end_x else ""
+
+    @staticmethod
+    def _find_end_of_word(line: str, x: int) -> int:
+        return next(
+            (i for i, ch in enumerate(line[x:], start=x) if not ch.isalnum()),
+            len(line)
+        )
 
     def is_end_of_file(self) -> bool:
         return self.next_char_position() is None
 
     def ensure_not_eof(self):
         if self.is_end_of_file() :
-            raise SxError.create_no_msg(SxErrorTypes.END_OF_FILE, self.position)
+            raise SxError.create_no_msg(SxErrorType.END_OF_FILE, self.position)
 
     def is_prefix_int(self) -> bool:
         return self.next_char().isdigit()
@@ -90,28 +100,32 @@ class Text:
     def is_prefix_letter(self) -> bool:
         return self.next_char().isalpha() or self.next_char() == '_'
 
+    def is_prefix_bracket_open(self) -> bool:
+        a = self.next_char()
+        return SymbolEnum.BRACKET_NORM_OPEN.is_prefix(a)
+
     def is_prefix_variable(self) -> bool:
+        return IsPrefix(self)( lambda word: not ReservedWordEnum.is_word(word)
+                                             and (self._is_valid_position(self.position.x, self.position.y)
+                                                  or not self.is_prefix_bracket_open()))
 
+    def is_prefix_data_type(self) -> bool:
+        return IsPrefix(self)( lambda word: ReservedWordGroupEnum.DATA_TYPE.contains(word.content))
 
-
-class IsPrefixTemplateMethod(ABC):
+class IsPrefix:
 
     def __init__(self, text: Text):
         self._text = text
 
-    @abstractmethod
-    def is_prefix_word(self, word: Word) -> bool:
-        pass
-
-    def is_prefix(self) -> bool:
+    def __call__(self, is_prefix : Callable[[str], bool]) -> bool:
         text  = self._text
         pos = text.position
         try:
-            print("do work")
             if not text.is_prefix_letter():
                 return False
-            word = WordParser.instance().read(text)
-            return self.is_prefix_word(word)
+            word = text.look_ahead()
+
+            return is_prefix(word)
         finally:
             text.position = pos
 

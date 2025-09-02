@@ -1,7 +1,7 @@
 import unittest
 
 from src.sx2python.common import SxError
-from src.sx2python.enums import SxErrorTypes
+from src.sx2python.enums import SxErrorType
 from src.sx2python.parsers.word_paser import WordParser
 
 from src.sx2python.text import Text, Position
@@ -25,7 +25,7 @@ class TestWordParser(unittest.TestCase):
         with self.assertRaises(SxError) as context:
             WordParser.instance().read(text)
 
-        self.assertEqual(SxErrorTypes.EMPTY_WORD, context.exception._typ)
+        self.assertEqual(SxErrorType.EMPTY_WORD, context.exception._typ)
 
     def test_read_multiple_words(self):
         """Test that 'read' parses the first word in a line with multiple words."""

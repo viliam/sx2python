@@ -1,7 +1,7 @@
 import unittest
 
 from src.sx2python.common import SxError
-from src.sx2python.enums import SxErrorTypes
+from src.sx2python.enums import SxErrorType
 from src.sx2python.parsers.expresions_parsers import IntegerParser
 from src.sx2python.text import Text, Position
 
@@ -24,7 +24,7 @@ class TestExpressionsParsers(unittest.TestCase):
         with self.assertRaises(SxError) as context:
             IntegerParser.instance().read(text)
 
-        self.assertEqual(SxErrorTypes.EXPECTED_INT, context.exception._typ)
+        self.assertEqual(SxErrorType.EXPECTED_INT, context.exception._typ)
 
     def test_read_integer_with_trailing_space(self):
         """Test that 'read' correctly parses an integer with trailing whitespace."""

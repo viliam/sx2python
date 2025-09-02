@@ -16,8 +16,6 @@ class SxParser(Protocol[TWord]):
         if not hasattr(cls, "_instance"):
             raise NotImplementedError(f"{cls.__name__} must override '_instance'")
 
-    # """Singleton pattern. Initialization of singleton instance"""
-    # def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -25,6 +23,5 @@ class SxParser(Protocol[TWord]):
     @classmethod
     def instance(cls):  return cls._instance
 
-
-    def read(self, text: Text) -> TWord:  ...
+    def read(self, text: "Text") -> TWord:  ...
 

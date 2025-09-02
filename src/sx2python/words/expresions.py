@@ -29,6 +29,17 @@ class Variable(Expression):
         return self._expType
 
 
+class DataType(Expression):
+
+    def __init__(self, name: Word):
+        super().__init__(name.position)
+        self._name = name
+        self._expType = ExpType.VOID
+
+    @property
+    def exp_type(self) -> ExpType:
+        return self._expType
+
 
 class Integer(Expression):
 
