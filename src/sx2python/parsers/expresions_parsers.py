@@ -12,11 +12,11 @@ class IntegerParser(SxParser[Integer]):
     _instance = None
 
     def read(self, text: "Text") -> Integer:
-        position = text.position
-        a_int = WordParser.instance().read(text).content
+        int_word = WordParser.instance().read(text)
+        a_int = int_word.content
         if not a_int.isdigit():  raise SxError.create(SxErrorType.EXPECTED_INT, text.position, text.line)
 
-        return Integer(a_int, position)
+        return Integer(a_int, int_word)
 
 
 class VariableParser(SxParser[Variable]):
@@ -44,7 +44,7 @@ class SimpleExprReader(SxParser[Expression]):
         if text.is_prefix_int(): return IntegerParser.instance().read(text);
         if text.is_prefix_variable(): return VariableParser.instance().read(text)
         if text.is_prefix_data_type(): return DataTypeParser.instance().read(text)
-        # if (tC.isPrefixCommand() ) return Readers.command().read(tC);
+        # if (tC.isPrefixCommand() ) return Readers.command().read(tC);  TODO: it's statement
         raise SxError.create(SxErrorType.UNEXPECTED_PREFIX, text.position, text.line)
 
 

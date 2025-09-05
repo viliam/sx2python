@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
 from src.sx2python.enums import ExpType
-from src.sx2python.text import Position
 from src.sx2python.words.word import WordABC, Word
 
 
@@ -16,12 +15,21 @@ class Expression(WordABC):
     # def visit(self, visitor):
     #     pass
 
-
-class Variable(Expression):
+class WordExpression(Expression):
 
     def __init__(self, name: Word):
         super().__init__(name.position)
-        self._name = name
+        self._content = name.content
+
+    @property
+    def content(self) -> str:
+        return self._content
+
+
+class Variable(WordExpression):
+
+    def __init__(self, name: Word):
+        super().__init__(name)
         self._expType = ExpType.UNKNOWN
 
     @property
@@ -29,11 +37,10 @@ class Variable(Expression):
         return self._expType
 
 
-class DataType(Expression):
+class DataType(WordExpression):
 
     def __init__(self, name: Word):
-        super().__init__(name.position)
-        self._name = name
+        super().__init__(name)
         self._expType = ExpType.VOID
 
     @property
@@ -41,11 +48,12 @@ class DataType(Expression):
         return self._expType
 
 
-class Integer(Expression):
+class Integer(WordExpression):
 
-    def __init__(self, integer: int, position: Position):
-        super().__init__(position)
+    def __init__(self, integer: int, name: Word):
+        super().__init__(name)
         self._integer = integer
+
 
     @property
     def integer(self) -> int:

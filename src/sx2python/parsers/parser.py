@@ -1,12 +1,13 @@
-from typing import Protocol
+from _typing import Generic
 from typing import TypeVar
 
 from src.sx2python.text import Text
-from src.sx2python.words.word import WordABC
+from src.sx2python.words.word import WordABC, Word
 
-TWord = TypeVar('TWord', bound=WordABC)
+TWord = TypeVar('TWord', bound=Word)
+TWordABC = TypeVar('TWordABC', bound=WordABC)
 
-class SxParser(Protocol[TWord]):
+class SxParser(Generic[TWord]):
 
     _instance = None
 

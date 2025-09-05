@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from src.sx2python.text import Position
 
@@ -8,9 +8,13 @@ class WordABC(ABC):
         self._position = position
 
     @property
+    @abstractmethod
+    def content(self) -> str:
+        ...
+
+    @property
     def position(self):
         return self._position
-
 
 class Word(WordABC):
     def __init__(self, position: Position, content: str=None):
