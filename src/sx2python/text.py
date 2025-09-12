@@ -1,9 +1,8 @@
 from typing import Optional, Callable
 
 from src.sx2python.common import SxError
-from src.sx2python.enums import SxErrorType, ReservedWordEnum, SymbolEnum, ReservedWordGroupEnum
+from src.sx2python.enums import SxErrorType, ReservedWordEnum, SymbolEnum, ReservedWordGroupEnum, SymbolGroupEnum
 from src.sx2python.position import Position
-from src.sx2python.words.word import Word
 
 
 class Text:
@@ -64,7 +63,7 @@ class Text:
 
 
     def next_char(self) -> str:
-        """Move position to next character, read that character and return a position back"""
+        """Move position to the next character, read that character and return a position back"""
         actual = Position.create( self._position)
         self.next_char_position()
         self.ensure_not_eof()
@@ -87,6 +86,11 @@ class Text:
             len(line)
         )
 
+    def take_end_of_line(self) -> str:
+        self.ensure_not_eof()
+        x, y = self.position.x, self.position.y
+        return self._lines[y][x:]
+
     def is_end_of_file(self) -> bool:
         return self.next_char_position() is None
 
@@ -99,6 +103,13 @@ class Text:
 
     def is_prefix_letter(self) -> bool:
         return self.next_char().isalpha() or self.next_char() == '_'
+
+    def is_prefix_operator(self) -> bool:
+        a = self.next_char()
+        return SymbolGroupEnum.OP_COMPARISON.is_prefix(a) or \
+               SymbolGroupEnum.OP_ARITH.is_prefix(a) or \
+               SymbolGroupEnum.OP_ASSIGNMENT.is_prefix(a) or \
+               SymbolGroupEnum.OP_BOOL.is_prefix(a)
 
     def is_prefix_bracket_open(self) -> bool:
         a = self.next_char()

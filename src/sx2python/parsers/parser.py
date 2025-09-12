@@ -1,4 +1,5 @@
 from _typing import Generic
+from abc import ABC
 from typing import TypeVar
 
 from src.sx2python.text import Text
@@ -7,7 +8,7 @@ from src.sx2python.words.word import WordABC, Word
 TWord = TypeVar('TWord', bound=Word)
 TWordABC = TypeVar('TWordABC', bound=WordABC)
 
-class SxParser(Generic[TWord]):
+class SxParser(ABC, Generic[TWord]):
 
     _instance = None
 
@@ -22,7 +23,7 @@ class SxParser(Generic[TWord]):
         return cls._instance
 
     @classmethod
-    def instance(cls):  return cls._instance
+    def i(cls):  return cls._instance
 
     def read(self, text: "Text") -> TWord:  ...
 

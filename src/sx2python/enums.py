@@ -1,13 +1,15 @@
 from enum import Enum, auto
 from typing import Optional, FrozenSet
 
-
 class SxErrorType(Enum):
     EMPTY_WORD = auto()
     END_OF_FILE = auto()
     EXPECTED_INT = auto()
     UNEXPECTED_PREFIX = auto()
     EXPECTED_DATA_TYPE = auto()
+    EXPECTED_BRACKET = auto()
+    EXPECTED_OPERATOR = auto()
+    UNKNOWN_OPERATOR = auto()
 
 class ExpType(Enum):
     VOID = auto()
@@ -112,3 +114,35 @@ class SymbolEnum(str, Enum):
         if not a:
             return False
         return self.value[0] == a[0]
+
+class SymbolGroupEnum(Enum):
+    OP_ARITH = frozenset({SymbolEnum.PLUS, SymbolEnum.MINUS, SymbolEnum.TIMES, SymbolEnum.MODULO, SymbolEnum.REST})
+    OP_BOOL = frozenset({SymbolEnum.AND, SymbolEnum.AND_STRONG, SymbolEnum.OR, SymbolEnum.OR_STRONG})
+    OP_COMPARISON = frozenset({SymbolEnum.SMALLER, SymbolEnum.SMALLER_EQUAL, SymbolEnum.GREATER,
+                               SymbolEnum.GRATER_EQUAL, SymbolEnum.EQUAL, SymbolEnum.UNEQUAL})
+    OP_EXP = frozenset({SymbolEnum.PLUS, SymbolEnum.MINUS, SymbolEnum.TIMES,
+                        SymbolEnum.MODULO, SymbolEnum.REST, SymbolEnum.AND,
+                        SymbolEnum.AND_STRONG, SymbolEnum.OR, SymbolEnum.OR_STRONG,
+                        SymbolEnum.SMALLER, SymbolEnum.SMALLER_EQUAL, SymbolEnum.GREATER,
+                        SymbolEnum.GRATER_EQUAL, SymbolEnum.EQUAL, SymbolEnum.UNEQUAL})
+    OP_ASSIGNMENT = frozenset({SymbolEnum.ASSIGN})
+    COMMAS = frozenset({SymbolEnum.COMMA,SymbolEnum.SEMICOLON,SymbolEnum.DOT})
+    BRACKET = frozenset({SymbolEnum.BRACKET_NORM_OPEN, SymbolEnum.BRACKET_NORM_CLOSE,
+                         SymbolEnum.PARENTHESIS_BLOCK_OPEN, SymbolEnum.PARENTHESIS_BLOCK_CLOSE})
+
+
+    def __init__(self, members: FrozenSet[SymbolEnum]):
+        self._members: FrozenSet[SymbolEnum] = members
+
+    def contains(self, word: SymbolEnum) -> bool:
+        return word in self.members
+
+    def is_prefix(self, a: str) -> bool:
+        for sy in self.members:
+            if sy.is_prefix(a):
+                return True
+        return False
+
+    @property
+    def members(self) -> FrozenSet[SymbolEnum]:
+        return self._members

@@ -10,7 +10,7 @@ class WordParser(SxParser[Word]):
     _instance = None
 
     @classmethod
-    def instance(cls) -> SxParser[Word]:
+    def i(cls) -> SxParser[Word]:
         if cls._instance is None:
             cls._instance = cls()
 

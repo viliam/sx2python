@@ -9,10 +9,10 @@ from src.sx2python.text import Text
 
 E = TypeVar('E', bound='Word')
 
-class ReservedWordAbstractReader(SxParser[E]):
+class ReservedWordAbstractParser(SxParser[E]):
 
     def read(self, text: Text) -> E:
-        word = WordParser.instance().read(text).content
+        word = WordParser.i().read(text).content
         if not self.reserved_word.contains(word):
             raise SxError(self.sx_error_type, text.position, text.line)
 

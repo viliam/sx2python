@@ -11,6 +11,8 @@ class SxError(Exception):
         self._typ = typ
         self._position = position
 
+    @property
+    def typ(self) -> SxErrorType: return self._typ
 
     @classmethod
     def create_no_msg(cls, typ: SxErrorType, position: Position) -> "SxError":
