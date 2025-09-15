@@ -11,6 +11,7 @@ class Text:
     def __init__(self, lines: list[str]):
         self._lines = lines
         self._position = Position( 0, 0)
+        self._open_brackets = 0
 
 
     @property
@@ -30,7 +31,6 @@ class Text:
 
     def line_at(self, row: int) -> str:
         return self._lines[row] if 0 <= row < len(self._lines) else ""
-
 
     def next_char_position(self) -> Optional[Position]:
         """Move cursor to a next not empty character"""
@@ -52,6 +52,31 @@ class Text:
         self.position = Position(x, y)
         return self.position
 
+
+    def next_char_position_in_expression(self) -> Optional[Position]:
+        """Move cursor to a next not empty character"""
+        position = self._position
+        x = position.x
+        y = position.y
+
+        for y, line in enumerate(self._lines, start=position.y):
+            tail = line[x:].lstrip()
+            if len(tail) > 0:
+                if tail == '\\':
+                    x = 0
+                else:
+                    x = len(line) - len(line[x:].lstrip())
+                    break
+            else:
+                if self._open_brackets == 0:
+                    raise SxError(SxErrorType.EXPECTED_TOKEN, self._lines[y], self._position)
+                x = 0
+
+        if not self._is_valid_position(x, y) :
+            return None
+
+        self.position = Position(x, y)
+        return self.position
 
     def _is_valid_position(self, x: int, y: int) -> bool:
         if y < 0 or y >= len(self._lines):
@@ -86,6 +111,12 @@ class Text:
             len(line)
         )
 
+    def increase_open_brackets(self):
+        self._open_brackets += 1
+
+    def decrease_open_brackets(self):
+        self._open_brackets -= 1
+
     def take_end_of_line(self) -> str:
         self.ensure_not_eof()
         x, y = self.position.x, self.position.y
@@ -114,6 +145,15 @@ class Text:
     def is_prefix_bracket_open(self) -> bool:
         a = self.next_char()
         return SymbolEnum.BRACKET_NORM_OPEN.is_prefix(a)
+
+    def is_prefix_bracket_closed(self) -> bool:
+        a = self.next_char()
+        return SymbolEnum.BRACKET_NORM_CLOSE.is_prefix(a)
+
+    def is_prefix_comma(self) -> bool:
+        a = self.next_char()
+        return SymbolGroupEnum.COMMAS.is_prefix(a)
+
 
     def is_prefix_variable(self) -> bool:
         return IsPrefix(self)( lambda word: not ReservedWordEnum.is_word(word)

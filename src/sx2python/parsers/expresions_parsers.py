@@ -2,7 +2,7 @@ from src.sx2python.common import SxError
 from src.sx2python.enums import SxErrorType
 from src.sx2python.parsers.parser import SxParser
 from src.sx2python.parsers.symbols_parsers import BracketParser, OperatorExpressionParser
-from src.sx2python.parsers.word_paser import WordParser
+from src.sx2python.parsers.word_paser import WordExpressionParser
 from src.sx2python.text import Text
 from src.sx2python.words.expresions import Integer, Variable, ExpressionABC, BracketExpression, Expression
 
@@ -12,7 +12,7 @@ class IntegerParser(SxParser[Integer]):
     _instance = None
 
     def read(self, text: "Text") -> Integer:
-        int_word = WordParser.i().read(text)
+        int_word = WordExpressionParser.i().read(text)
         a_int = int_word.content
         if not a_int.isdigit():  raise SxError.create(SxErrorType.EXPECTED_INT, text.position, text.line)
 
@@ -22,7 +22,7 @@ class IntegerParser(SxParser[Integer]):
 class VariableParser(SxParser[Variable]):
 
     def read(self, text: "Text") -> Variable:
-        name =  WordParser.i().read(text)
+        name =  WordExpressionParser.i().read(text)
         return Variable(name)
 
 
@@ -61,20 +61,22 @@ class ExpressionParser(SxParser[ExpressionABC]):
             op = OperatorExpressionParser.i().read(text)
             return Expression(expr, op, ExpressionParser.i().read(text))
 
-        if not text.is_end_of_file(): self._check_end_of_expression(text)
+        if (not text.is_end_of_file() and
+            not text.is_prefix_operator() and
+            not text.is_prefix_comma() and
+            not text.is_prefix_bracket_closed() ):
+            raise SxError.create(SxErrorType.EXPECTED_OPERATOR, text.position, text.line)
 
         return expr
-
-    def _check_end_of_expression(self, text: "Text") :
-        ...
-#     if  ( !tC.isPrefixOperator() && !tC.isPrefixComma() && !tC.isPrefixBracketClosed() )
-#         throw SxException.create(SxExTyp.EXPECTED_OPERATOR, tC);
-
 
 class BracketExpressionParser(SxParser[ExpressionABC]):
 
     def read(self, text: "Text") -> ExpressionABC:
         z1 = BracketParser.i().read(text)
+        text.increase_open_brackets()
+
         ex = ExpressionParser.i().read(text)
+
         z2 = BracketParser.i().read(text)
+        text.decrease_open_brackets()
         return BracketExpression(z1, ex, z2)

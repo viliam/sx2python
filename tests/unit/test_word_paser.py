@@ -74,4 +74,4 @@ class TestWordParser(unittest.TestCase):
         with self.assertRaises(SxError) as context:
             WordParser.i().read(text)
 
-        self.assertEqual(SxErrorType.EMPTY_WORD, context.exception._typ)
+        self.assertEqual(SxErrorType.EXPECTED_TOKEN, context.exception._typ)

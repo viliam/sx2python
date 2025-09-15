@@ -90,7 +90,7 @@ class Expression(ExpressionABC):
 
 class BracketExpression(ExpressionABC):
 
-    def __init__(self, z1: Bracket, z2: Bracket, expression: ExpressionABC):
+    def __init__(self, z1: Bracket, expression: ExpressionABC, z2: Bracket):
         super().__init__(z1.position)
         self._z1 = z1
         self._z2 = z2

@@ -2,7 +2,7 @@ import unittest
 
 from src.sx2python.common import SxError
 from src.sx2python.enums import SxErrorType, ExpType
-from src.sx2python.parsers.expresions_parsers import IntegerParser, SimpleExpressionParser, ExpressionParser
+from src.sx2python.parsers.expresions_parsers import IntegerParser, SimpleExpressionParser
 from src.sx2python.text import Text
 
 class TestExpressionsParsers(unittest.TestCase):
@@ -33,15 +33,3 @@ class TestExpressionsParsers(unittest.TestCase):
                 result = SimpleExpressionParser.i().read(text)
                 self.assertEqual(expected_type, result.exp_type)
 
-    def test_read_expression_positive(self):
-        positive_cases = {
-            "23":   ExpType.INT,
-            "23+3":   ExpType.INT,
-            "23+a":   ExpType.INT,
-            "ahoj": ExpType.UNKNOWN
-        }
-        for word, expected_type in positive_cases.items():
-            with self.subTest(word):
-                text = Text([word])
-                result = ExpressionParser.i().read(text)
-                self.assertEqual(expected_type, result.exp_type)

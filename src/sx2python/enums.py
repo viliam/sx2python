@@ -2,13 +2,13 @@ from enum import Enum, auto
 from typing import Optional, FrozenSet
 
 class SxErrorType(Enum):
-    EMPTY_WORD = auto()
     END_OF_FILE = auto()
     EXPECTED_INT = auto()
     UNEXPECTED_PREFIX = auto()
     EXPECTED_DATA_TYPE = auto()
     EXPECTED_BRACKET = auto()
     EXPECTED_OPERATOR = auto()
+    EXPECTED_TOKEN = auto()
     UNKNOWN_OPERATOR = auto()
 
 class ExpType(Enum):
@@ -27,6 +27,8 @@ class ReservedWordEnum(str, Enum):
     VOID = "void"
     TRUE = "true"
     FALSE = "false"
+    AND = "and"
+    OR = "or"
 
     def matches(self, s: str) -> bool:
         return self.value == s
@@ -68,12 +70,14 @@ class SymbolEnum(str, Enum):
     PLUS = "+"
     MINUS = "-"
     TIMES = "*"
+    DIVIDE = "/"
     MODULO = "%"
-    REST = "/"
+    FLOOR_DIVISION = "//"
+    EXPONENT = "**"
 
     # BOOL
-    AND = "&"
-    OR = "|"
+    AND = "and"
+    OR = "or"
     AND_STRONG = "&&"
     OR_STRONG = "||"
 
@@ -116,12 +120,15 @@ class SymbolEnum(str, Enum):
         return self.value[0] == a[0]
 
 class SymbolGroupEnum(Enum):
-    OP_ARITH = frozenset({SymbolEnum.PLUS, SymbolEnum.MINUS, SymbolEnum.TIMES, SymbolEnum.MODULO, SymbolEnum.REST})
+    OP_ARITH = frozenset({SymbolEnum.PLUS, SymbolEnum.MINUS, SymbolEnum.TIMES,
+                          SymbolEnum.MODULO, SymbolEnum.DIVIDE, SymbolEnum.FLOOR_DIVISION,
+                          SymbolEnum.EXPONENT})
     OP_BOOL = frozenset({SymbolEnum.AND, SymbolEnum.AND_STRONG, SymbolEnum.OR, SymbolEnum.OR_STRONG})
     OP_COMPARISON = frozenset({SymbolEnum.SMALLER, SymbolEnum.SMALLER_EQUAL, SymbolEnum.GREATER,
                                SymbolEnum.GRATER_EQUAL, SymbolEnum.EQUAL, SymbolEnum.UNEQUAL})
     OP_EXP = frozenset({SymbolEnum.PLUS, SymbolEnum.MINUS, SymbolEnum.TIMES,
-                        SymbolEnum.MODULO, SymbolEnum.REST, SymbolEnum.AND,
+                        SymbolEnum.MODULO, SymbolEnum.DIVIDE, SymbolEnum.FLOOR_DIVISION,
+                        SymbolEnum.EXPONENT, SymbolEnum.AND,
                         SymbolEnum.AND_STRONG, SymbolEnum.OR, SymbolEnum.OR_STRONG,
                         SymbolEnum.SMALLER, SymbolEnum.SMALLER_EQUAL, SymbolEnum.GREATER,
                         SymbolEnum.GRATER_EQUAL, SymbolEnum.EQUAL, SymbolEnum.UNEQUAL})

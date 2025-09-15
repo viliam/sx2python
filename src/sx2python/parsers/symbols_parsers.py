@@ -14,6 +14,7 @@ class SymbolAbstractParser(SxParser[E], ABC):
 
     def read(self, text: Text) -> E:
         try:
+            # poz = text.next_char_position_in_expression()
             poz = text.next_char_position()
             s_symbol = self._take_symbol(text)
             e_symbol = SymbolEnum.make_symbol( s_symbol)
@@ -47,6 +48,8 @@ class SymbolAbstractParser(SxParser[E], ABC):
 
 
 class BracketParser(SymbolAbstractParser[Bracket]):
+
+    _instance = None
 
     def get_symbols(self) -> FrozenSet[SymbolEnum]:
         return SymbolGroupEnum.BRACKET.members

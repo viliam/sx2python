@@ -27,11 +27,13 @@ class Operator(Symbol):
 
     def exp_type(self) -> ExpType:
         match self._symbol_enum:
-            case SymbolEnum.PLUS | SymbolEnum.MINUS | SymbolEnum.TIMES | SymbolEnum.MODULO | SymbolEnum.REST:
+            case SymbolEnum.PLUS | SymbolEnum.MINUS | SymbolEnum.TIMES | SymbolEnum.MODULO \
+                 | SymbolEnum.DIVIDE  | SymbolEnum.FLOOR_DIVISION | SymbolEnum.EXPONENT:
                 return ExpType.INT
             case SymbolEnum.AND | SymbolEnum.OR | SymbolEnum.AND_STRONG | SymbolEnum.OR_STRONG:
                 return ExpType.BOOL
-            case SymbolEnum.SMALLER | SymbolEnum.GREATER | SymbolEnum.SMALLER_EQUAL | SymbolEnum.GRATER_EQUAL | SymbolEnum.EQUAL | SymbolEnum.UNEQUAL:
+            case SymbolEnum.SMALLER | SymbolEnum.GREATER | SymbolEnum.SMALLER_EQUAL \
+                 | SymbolEnum.GRATER_EQUAL | SymbolEnum.EQUAL | SymbolEnum.UNEQUAL:
                 return ExpType.COMPARISON
             case SymbolEnum.ASSIGN:
                 return ExpType.UNKNOWN
