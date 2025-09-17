@@ -65,7 +65,7 @@ class ExpressionParser(SxParser[ExpressionABC]):
             not text.is_prefix_operator() and
             not text.is_prefix_comma() and
             not text.is_prefix_bracket_closed() ):
-            raise SxError.create(SxErrorType.EXPECTED_OPERATOR, text.position, text.line)
+            raise SxError.create(SxErrorType.UNCORRECTED_END_OF_EXPRESSION, text.position, text.line)
 
         return expr
 

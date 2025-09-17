@@ -33,5 +33,7 @@ class WordParser(SxParser[Word]):
 
 class WordExpressionParser(WordParser):
 
+    _instance = None
+
     def _next_char_position(self, text: "Text"):
         text.next_char_position_in_expression()

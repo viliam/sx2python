@@ -66,7 +66,6 @@ class Integer(WordExpression):
 
 class Expression(ExpressionABC):
 
-# (IExpression v1, Operator op, IExpression v2)
     def __init__(self, v1: ExpressionABC, op: Operator, v2: ExpressionABC):
         super().__init__(v1.position)
         self._v1 = v1
@@ -80,12 +79,6 @@ class Expression(ExpressionABC):
     @property
     def content(self) -> str:
         return self._v1.content + self._op.content + self._v2.content
-
-
-# public Enums.ExpType getExpType() { return op.getVyrazTyp(); }
-# public IExpression getV1() { return v1; }
-# public IExpression getV2() { return v2; }
-
 
 
 class BracketExpression(ExpressionABC):

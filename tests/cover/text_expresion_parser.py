@@ -34,9 +34,15 @@ class TestExpressionsParsers(unittest.TestCase):
             (["(23+a)-4"],ExpType.INT)
         ])
 
+    def test_read_multi_line(self):
+        self._do_the_test([
+            (["23+3+\\","4"], ExpType.INT),
+            (["(23+3+","4)"], ExpType.INT)
+        ])
+
     def test_read_multi_line_negative(self):
         self._do_the_test_negative([
-            (["23+3+\n4"], SxErrorType.END_OF_FILE)
+            (["23+3+","4"], SxErrorType.EXPECTED_TOKEN)
         ])
 
     def _do_the_test(self, cases):

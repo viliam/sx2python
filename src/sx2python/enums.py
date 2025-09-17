@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import Optional, FrozenSet
 
 class SxErrorType(Enum):
+    UNCORRECTED_END_OF_EXPRESSION = auto()
     END_OF_FILE = auto()
     EXPECTED_INT = auto()
     UNEXPECTED_PREFIX = auto()

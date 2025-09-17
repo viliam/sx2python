@@ -12,10 +12,12 @@ E = TypeVar('E', bound='Symbol')
 
 class SymbolAbstractParser(SxParser[E], ABC):
 
+    def _next_char_position(self, text: "Text"):
+        return text.next_char_position()
+
     def read(self, text: Text) -> E:
         try:
-            # poz = text.next_char_position_in_expression()
-            poz = text.next_char_position()
+            poz = self._next_char_position(text)
             s_symbol = self._take_symbol(text)
             e_symbol = SymbolEnum.make_symbol( s_symbol)
             return self.create(poz, e_symbol)
@@ -66,6 +68,10 @@ class BracketParser(SymbolAbstractParser[Bracket]):
 class OperatorExpressionParser(SymbolAbstractParser[Operator]):
 
     _instance = None
+
+
+    def _next_char_position(self, text: "Text"):
+        return text.next_char_position_in_expression()
 
     def get_symbols(self) -> FrozenSet[str]:
         return SymbolGroupEnum.OP_EXP.members

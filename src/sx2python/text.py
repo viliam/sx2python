@@ -86,11 +86,17 @@ class Text:
 
         return True
 
+    def next_char_in_expression(self):
+        return self._next_char( self.next_char_position_in_expression)
+
 
     def next_char(self) -> str:
+        return self._next_char( self.next_char_position)
+
+    def _next_char(self, lambda_next_char: Callable[[], Position]) -> str:
         """Move position to the next character, read that character and return a position back"""
         actual = Position.create( self._position)
-        self.next_char_position()
+        lambda_next_char()
         self.ensure_not_eof()
 
         x, y = self._position.x, self._position.y
@@ -130,13 +136,13 @@ class Text:
             raise SxError.create_no_msg(SxErrorType.END_OF_FILE, self.position)
 
     def is_prefix_int(self) -> bool:
-        return self.next_char().isdigit()
+        return self.next_char_in_expression().isdigit()
 
     def is_prefix_letter(self) -> bool:
-        return self.next_char().isalpha() or self.next_char() == '_'
+        return self.next_char_in_expression().isalpha() or self.next_char() == '_'
 
     def is_prefix_operator(self) -> bool:
-        a = self.next_char()
+        a = self.next_char_in_expression()
         return SymbolGroupEnum.OP_COMPARISON.is_prefix(a) or \
                SymbolGroupEnum.OP_ARITH.is_prefix(a) or \
                SymbolGroupEnum.OP_ASSIGNMENT.is_prefix(a) or \
@@ -151,7 +157,7 @@ class Text:
         return SymbolEnum.BRACKET_NORM_CLOSE.is_prefix(a)
 
     def is_prefix_comma(self) -> bool:
-        a = self.next_char()
+        a = self.next_char_in_expression()
         return SymbolGroupEnum.COMMAS.is_prefix(a)
 
 
