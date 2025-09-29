@@ -12,12 +12,16 @@ class SxErrorType(Enum):
     EXPECTED_TOKEN = auto()
     UNKNOWN_OPERATOR = auto()
 
+class ExpTypeWithPriority:
+    def __init__(self, priority: int):
+        self.priority = priority
+
 class ExpType(Enum):
-    VOID = auto()
-    INT = auto()
-    BOOL = auto()
-    COMPARISON = auto()
-    UNKNOWN = auto()
+    VOID = ExpTypeWithPriority(0)
+    INT = ExpTypeWithPriority(1)
+    BOOL = ExpTypeWithPriority(3)
+    COMPARISON = ExpTypeWithPriority(2)
+    UNKNOWN = ExpTypeWithPriority(-1)
 
 
 class ReservedWordEnum(str, Enum):

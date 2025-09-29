@@ -26,12 +26,31 @@ class TestExpressionsParsers(unittest.TestCase):
             (["23*a"],    ExpType.INT),
             (["23/a"],    ExpType.INT),
             (["23**a"],   ExpType.INT),
-            (["(23+a)"],  ExpType.INT)
+            (["(23+a)"],  ExpType.INT),
+            (["2>3"],  ExpType.COMPARISON),
+            (["2<3"],  ExpType.COMPARISON),
+            (["2>=df"],  ExpType.COMPARISON),
+            (["2<=df"],  ExpType.COMPARISON)
         ])
 
     def test_read_complex_positive(self):
         self._do_the_test([
-            (["(23+a)-4"],ExpType.INT)
+            (["(23+a)-4"],ExpType.INT),
+            (["(3+a)-(4)"],ExpType.INT),
+            (["3+(a-(4))"],ExpType.INT),
+            (["((3+a)-(4))"],ExpType.INT),
+            (["(3<a) and (4 == 4)"],ExpType.BOOL),
+            (["3+1<a or 4>=ahoj"],ExpType.BOOL)
+        ])
+
+    def test_read_complex_negative(self):
+        self._do_the_test_negative([
+            (["(23+a-4"], SxErrorType.END_OF_FILE),
+            (["(3+3a)-(4)"], SxErrorType.EXPECTED_INT),
+            ([")3+(a-(4))"], SxErrorType.UNEXPECTED_PREFIX),
+            (["((3+>a)-(4))"], SxErrorType.UNEXPECTED_PREFIX),
+            (["(3<a) ad (4 == 4)"], SxErrorType.EXPECTED_OPERATOR),
+            (["3+1<a( or 4>=ahoj"], SxErrorType.UNCORRECTED_END_OF_EXPRESSION)
         ])
 
     def test_read_multi_line(self):

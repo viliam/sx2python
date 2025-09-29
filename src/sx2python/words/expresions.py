@@ -74,7 +74,12 @@ class Expression(ExpressionABC):
 
     @property
     def exp_type(self) -> ExpType:
-        return self._op.exp_type()
+        return max(
+            self._v1.exp_type,
+            self._v2.exp_type,
+            self._op.exp_type,
+            key = lambda x: x.value.priority
+        )
 
     @property
     def content(self) -> str:

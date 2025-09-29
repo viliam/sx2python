@@ -25,6 +25,7 @@ class Operator(Symbol):
     def __init__(self, position: Position, symbol_enum: SymbolEnum):
         super().__init__(position, symbol_enum)
 
+    @property
     def exp_type(self) -> ExpType:
         match self._symbol_enum:
             case SymbolEnum.PLUS | SymbolEnum.MINUS | SymbolEnum.TIMES | SymbolEnum.MODULO \
