@@ -7,8 +7,9 @@ from src.sx2python.enums import SymbolEnum, SxErrorType, SymbolGroupEnum
 from typing import TypeVar, Optional, FrozenSet
 from src.sx2python.parsers.parser import SxParser
 from src.sx2python.words.symbol import Bracket, Operator
+from sx2python.words.symbol import Symbol
 
-E = TypeVar('E', bound='Symbol')
+E = TypeVar('E', bound=Symbol)
 
 class SymbolAbstractParser(SxParser[E], ABC):
 

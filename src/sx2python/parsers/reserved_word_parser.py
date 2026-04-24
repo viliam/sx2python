@@ -6,8 +6,9 @@ from src.sx2python.enums import ReservedWordGroupEnum, SxErrorType
 from src.sx2python.parsers.parser import SxParser
 from src.sx2python.parsers.word_paser import  WordParser
 from src.sx2python.text import Text
+from sx2python.words.word import Word
 
-E = TypeVar('E', bound='Word')
+E = TypeVar('E', bound=Word)
 
 class ReservedWordAbstractParser(SxParser[E]):
 

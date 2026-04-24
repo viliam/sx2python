@@ -25,7 +25,8 @@ class WordParser(SxParser[Word]):
         begin_x = position.x
         word = text.look_ahead()
 
-        if "" == word:  raise SxError.create(SxErrorType.EXPECTED_TOKEN, text.position, text.line)
+        if "" == word:
+            raise SxError.create(SxErrorType.EXPECTED_TOKEN, text.position, text.line)
 
         end_x = begin_x + len(word)
         text.position = Position(end_x, position.y)

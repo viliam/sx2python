@@ -14,7 +14,8 @@ class IntegerParser(SxParser[Integer]):
     def read(self, text: "Text") -> Integer:
         int_word = WordExpressionParser.i().read(text)
         a_int = int_word.content
-        if not a_int.isdigit():  raise SxError.create(SxErrorType.EXPECTED_INT, text.position, text.line)
+        if not a_int.isdigit():
+            raise SxError.create(SxErrorType.EXPECTED_INT, text.position, text.line)
 
         return Integer(a_int, int_word)
 
@@ -41,8 +42,10 @@ class VariableParser(SxParser[Variable]):
 class SimpleExpressionParser(SxParser[ExpressionABC]):
 
     def read(self, text: "Text") -> ExpressionABC:
-        if text.is_prefix_int(): return IntegerParser.i().read(text);
-        if text.is_prefix_variable(): return VariableParser.i().read(text)
+        if text.is_prefix_int():
+            return IntegerParser.i().read(text)
+        if text.is_prefix_variable():
+            return VariableParser.i().read(text)
         # if (tC.isPrefixCommand() ) return Readers.command().read(tC);  TODO: it's statement
         raise SxError.create(SxErrorType.UNEXPECTED_PREFIX, text.position, text.line)
 
@@ -55,7 +58,8 @@ class ExpressionParser(SxParser[ExpressionABC]):
             if text.is_prefix_bracket_open()
             else SimpleExpressionParser.i().read(text)
         )
-        if text.is_end_of_file(): return expr
+        if text.is_end_of_file():
+            return expr
 
         if text.is_prefix_operator():
             op = OperatorExpressionParser.i().read(text)

@@ -11,6 +11,6 @@ class TestException(unittest.TestCase):
         position = Position(4, 0)
         line = "Example line"
         result = SxError._make_message(SxErrorType.UNEXPECTED_PREFIX, position, line)
-        expected = f"UNEXPECTED_PREFIX  : Example line    \n char = p"
+        expected = "UNEXPECTED_PREFIX  : Example line    \n char = p"
         self.assertEqual(expected, result)
 
