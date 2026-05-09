@@ -32,7 +32,7 @@ class Text:
     def line_at(self, row: int) -> str:
         return self._lines[row] if 0 <= row < len(self._lines) else ""
 
-    def next_char_position(self) -> Optional[Position]:
+    def next_char_position(self) ->  Optional[Position]:
         """Move cursor to a next not empty character"""
         position = self._position
         x = position.x
@@ -53,7 +53,7 @@ class Text:
         return self.position
 
 
-    def next_char_position_in_expression(self) -> Optional[Position]:
+    def next_char_position_in_expression(self)  -> Optional[Position]:
         """Move cursor to a next not empty character"""
         position = self._position
         x = position.x
@@ -94,7 +94,7 @@ class Text:
         return self._next_char( self.next_char_position)
 
     def _next_char(self, lambda_next_char: Callable[[], Position]) -> str:
-        """Move position to the next character, read that character and return a position back"""
+        """Move position to the next character, read that character, and return a position"""
         actual = Position.create( self._position)
         lambda_next_char()
         self.ensure_not_eof()
